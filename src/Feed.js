@@ -1,34 +1,84 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Feed.css";
 import MessageSender from "./MessageSender";
 import Post from "./Post";
 import StoryReel from "./StoryReel";
+import db from "./firebase";
+import {
+  doc,
+  onSnapshot,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+
 function Feed() {
+  const [posts, setPosts] = useState([]);
+
+  // {
+  //   setPosts(
+  //     snapshot.docs.map(
+  //       (doc) => (
+  //         console.log(doc.data()),
+  //         {
+  //           id: doc.id,
+  //           data: doc.data(),
+  //         }
+  //       )
+  //     )
+  //   );
+  // }
+
+  // const col = collection(db, "posts");
+
+  // useEffect(() => {
+  //   const getdata = () => {
+  //     const dataa = getDocs(col);
+  //     console.log(dataa);
+  //     // setPosts(data)
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   const q = doc(collection(db, "posts"));
+  //   const unsub = onSnapshot(q, (snapshot) => {
+  //     setPosts(
+  //       snapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         data: doc.data(),
+  //       }))
+  //     );
+  //   });
+  // }, []);
+
+  // useEffect(() => {
+  //   db.collection("posts").onSnapshot((snapshot) =>
+  //     setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })))
+  //   );
+  // }, []);
+
+  useEffect(() => {
+    collection(db, "posts").onSnapshot((snapshot) => {
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })));
+    });
+  }, []);
+
   return (
     <div className='feed'>
       <StoryReel />
       <MessageSender />
-      <Post
-        profilePic='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-        message='this works'
-        timestamp='This is a timestamp'
-        username='ranatalha'
-        image='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-      />
-      <Post
-        profilePic='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-        message='this works'
-        timestamp='This is a timestamp'
-        username='ranatalha'
-        image='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-      />
-      <Post
-        profilePic='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-        message='this works'
-        timestamp='This is a timestamp'
-        username='ranatalha'
-        image='https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80'
-      />
+
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          profilePic={post.data.profilePic}
+          message={post.data.message}
+          timestamp={post.data.timestamp}
+          username={post.data.username}
+          image={post.data.image}
+        />
+      ))}
     </div>
   );
 }
